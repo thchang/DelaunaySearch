@@ -92,23 +92,22 @@ def DelaunaySearch(data, obj_func, budget=10000):
    # The budget has exhausted. Return the collected data.
    return [minind, np_x, np_f]
 
+# Main program for optimizing a quadratic in 2d and visualizing the results.
+# Called when this file is executed by the interpreter.
 def main():
    import matplotlib.pyplot as plt
    from scipy.spatial import Delaunay
    from pyDOE import lhs
    # Test DelaunaySearch on a quadratic.
    func = lambda x: sum([i ** 2 for i in x])
-   # Generate a latin hypercube design in 10d.
+   # Generate a latin hypercube design in 2d.
    data = lhs(2, 10)
    data = (data - 0.5) * 2.0
-   # Uncomment for a grid design in 3d (8 points).
-   #data = [[-1, -1, -1], [-1,-1,1], [-1,1,-1], [-1,1,1],
-   #        [1,-1,-1], [1,-1,1],[1,1,-1],[1,1,1]]
    data = data.tolist()
    # Generate function values.
    for i in range(len(data)):
       data[i].append(func(data[i]))
-   # 50 iteration budget.
+   # 100 iteration budget.
    [ind, x, f] = DelaunaySearch(data, func, budget=100)
    # Print the results.
    print('x = ', x[ind,:], '. f = ', f[ind], '.')
