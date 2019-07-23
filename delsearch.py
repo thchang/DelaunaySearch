@@ -6,11 +6,12 @@
 # algorithm.
 #
 # In each iteration, DelaunaySearch guesses the objective value at the
-# barycenter of each simplex in the umbrella neighborhood of the current
-# minima, using the planar fit in its d+1 neighbors.
+# barycenter of each simplex in the mesh using the linearly extrapolated
+# value among its d+1 neighbors.
 #
-# The candidate simplex with the lowest average predicted value is subdivided
-# in the subsequent iteration.
+# The candidate mesh element with the lowest average predicted value is
+# subdivided in the subsequent iteration, via a function evaluation at its
+# center.
 #
 # This is experimental code and not yet robust for all use cases.
 # In particular, if the true minima is outside the convex hull of the provided
@@ -33,6 +34,7 @@
 def DelaunaySearch(data, obj_func, budget=10000):
    import numpy as np
    from scipy.spatial import Delaunay
+
    # Separate the design points and function values.
    np_x = np.array(data)[:,0:-1]
    np_f = np.array(data)[:,-1]
@@ -42,29 +44,27 @@ def DelaunaySearch(data, obj_func, budget=10000):
    center_weights = np.ones(d+1) / (d+1)
    # Initialize the current minima.
    minind = np.argmin(np_f)
+
    # Loop until the budget is exhausted.
    for i in range(budget):
+
       # Get the current mesh.
       mesh = Delaunay(np_x)
-
-      # Get the umbrella neighborhood of the minind.
-      neighborhood = []
-      j = 0
-      for elmt in mesh.simplices:
-         if any(elmt == minind):
-            neighborhood.append(j)
-         j += 1
-
-      # Reinitialize the list of points and predictions for this iteration.
+      # Reinitialize the list of (centers, predictions) for this iteration.
       predictions = []
-      # Loop over all elements in the umbrella neighborhood.
-      for elmt in neighborhood:
+      # Track the index of the current element.
+      j = 0
+
+      # Loop over all elements in the mesh.
+      for elmt in mesh.simplices:
+
          # Compute the center of the current element.
-         center = np.transpose(np_x[mesh.simplices[elmt,:]]).dot(center_weights)
+         center = np.transpose(np_x[elmt]).dot(center_weights)
          predictions.append([center, 0.0])
+
          # Loop over all d+1 neighbors of the current element.
-         j = 0
-         for neighbor in mesh.neighbors[elmt,:]:
+         k = 0
+         for neighbor in mesh.neighbors[j,:]:
             # If on the convex hull, some facets will have no neighbor.
             if neighbor == -1:
                continue
@@ -76,8 +76,11 @@ def DelaunaySearch(data, obj_func, budget=10000):
                affine_w[d] = 1.0 - sum(affine_w[0:d])
                predictions[-1][1] += np_f[mesh.simplices[neighbor]].dot(
                   affine_w)
-               j += 1 # Count the number of true neighbors.
-         predictions[-1][1] /= j
+               k += 1 # Count the number of true neighbors.
+         # Compute the average.
+         predictions[-1][1] /= k
+         j += 1 # Track the index of elmt
+
       # The next sample should be taken at the minimum predicted value.
       next_x = np.array(predictions)[np.argmin(np.array(predictions)[:,1]),0]
       next_f = obj_func(next_x)

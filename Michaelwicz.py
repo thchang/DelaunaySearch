@@ -1,22 +1,25 @@
-# 2D Rosenbrock's valley function. Minima is at (0,0)
-def Rosenbrock(x):
-   return x[0]**2 + 100*(x[1] - x[0]**2)**2
+# 2D Michaelwicz's function with flat ridges and steep valleys.
+# Minima is at ~(2.2,1.57).
+def Michaelwicz(x):
+   from math import sin as sin, pi as pi
+   return -(sin(x[0]) * sin(x[0]**2/pi)**20 + sin(x[1]) * sin(2*x[1]**2/pi)**20)
 
-# Test DelaunaySearch on the Rosenbrock valley.
+# Test DelaunaySearch on the Michealwicz function.
 def main():
    from delsearch import DelaunaySearch
    import matplotlib.pyplot as plt
    from scipy.spatial import Delaunay
    from pyDOE import lhs
+   from math import pi
    # Generate a latin hypercube design in 2d.
    data = lhs(2, 20)
-   data = (data - 0.5) * 4
+   data = (data) * pi
    data = data.tolist()
    # Populate function values.
    for i in range(len(data)):
-      data[i].append(Rosenbrock(data[i]))
+      data[i].append(Michaelwicz(data[i]))
    # 100 iteration budget.
-   [ind, x, f] = DelaunaySearch(data, Rosenbrock, budget=100)
+   [ind, x, f] = DelaunaySearch(data, Michaelwicz, budget=100)
    # Print the results.
    print('x = ', x[ind,:], '. f = ', f[ind], '.')
    # Display the final mesh on screen.
