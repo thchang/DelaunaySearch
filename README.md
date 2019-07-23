@@ -71,6 +71,10 @@ visualize the results in matplotlib:
 python3 delsearch.py
 ``
 
+To do the same for the Rosenbrock, Griewank, and Michaelwicz functions,
+execute ``python3 Rosenbrock.py``, ``python3 Griewank.py``, and
+``python3 Michaelwicz.py`` respectively.
+
 ## Author
 
 * **Tyler H. Chang** - *Primary author*
