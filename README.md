@@ -26,6 +26,9 @@ data set, then the Delaunay search can never reach it.
 
 ## Contents
 
+Note that all test functions have been shifted so that their global minima
+has value f(x) = 0.
+
  - delsearch.py contains the DelaunaySearch subroutine and an optional main
    program which uses a quadratic function and latin hypercube design for
    testing.

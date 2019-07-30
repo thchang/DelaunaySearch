@@ -20,10 +20,22 @@ def main():
       data[i].append(Michaelwicz(data[i]))
    # 100 iteration budget.
    [ind, x, f] = DelaunaySearch(data, Michaelwicz, budget=100)
+   # Shift up so the minima is at zero.
+   f[:] += 1.8013
    # Print the results.
    print('x = ', x[ind,:], '. f = ', f[ind], '.')
-   # Display the final mesh on screen.
+   print(f)
+   # Display the final data and mesh on screen.
    mesh = Delaunay(x)
+   t = []
+   for i in range(len(f) - len(data)):
+      t.append(i)
+   plt.subplot(1,2,1)
+   plt.title('Iteration vs. Function Value')
+   plt.yscale('log')
+   plt.scatter(t,f[len(data):])
+   plt.subplot(1,2,2)
+   plt.title('Final Mesh')
    plt.triplot(x[:,0], x[:,1], mesh.simplices.copy())
    plt.plot(x[:,0], x[:,1], 'o')
    plt.show()

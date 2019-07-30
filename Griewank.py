@@ -20,8 +20,17 @@ def main():
    [ind, x, f] = DelaunaySearch(data, Griewank, budget=100)
    # Print the results.
    print('x = ', x[ind,:], '. f = ', f[ind], '.')
-   # Display the final mesh on screen.
+   # Display the final data and mesh on screen.
    mesh = Delaunay(x)
+   t = []
+   for i in range(len(f) - len(data)):
+      t.append(i)
+   plt.subplot(1,2,1)
+   plt.title('Iteration vs. Function Value')
+   plt.yscale('log')
+   plt.scatter(t,f[len(data):])
+   plt.subplot(1,2,2)
+   plt.title('Final Mesh')
    plt.triplot(x[:,0], x[:,1], mesh.simplices.copy())
    plt.plot(x[:,0], x[:,1], 'o')
    plt.show()
