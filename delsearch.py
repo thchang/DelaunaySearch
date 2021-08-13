@@ -87,7 +87,8 @@ def DelaunaySearch(data, obj_func, budget=10000):
          j += 1 # Track the index of elmt
 
       # The next sample should be taken at the minimum predicted value.
-      next_x = np.array(predictions)[np.argmin(np.array(predictions)[:,1]),0]
+      next_x = np.array(predictions[np.argmin(np.array(predictions,
+                                                       dtype=object)[:,1])][0])
       next_f = obj_func(next_x)
 
       # Append x and f to the data arrays.

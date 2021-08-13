@@ -24,7 +24,7 @@ def main():
    f[:] += 1.8013
    # Print the results.
    print('x = ', x[ind,:], '. f = ', f[ind], '.')
-   print(f)
+   #print(f)
    # Display the final data and mesh on screen.
    mesh = Delaunay(x)
    t = []
