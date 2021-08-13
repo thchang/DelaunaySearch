@@ -6,12 +6,12 @@
 # algorithm.
 #
 # In each iteration, DelaunaySearch guesses the objective value at the
-# barycenter of each simplex in the mesh using the linearly extrapolated
+# circumcenter of each simplex in the mesh using the linearly extrapolated
 # value among its d+1 neighbors.
 #
 # The candidate mesh element with the lowest average predicted value is
 # subdivided in the subsequent iteration, via a function evaluation at its
-# center.
+# circumcenter.
 #
 # This is experimental code and not yet robust for all use cases.
 # In particular, if the true minima is outside the convex hull of the provided
@@ -59,7 +59,12 @@ def DelaunaySearch(data, obj_func, budget=10000):
       for elmt in mesh.simplices:
 
          # Compute the center of the current element.
-         center = np.transpose(np_x[elmt]).dot(center_weights)
+         A = np.zeros((d, d))
+         b = np.zeros(d)
+         for i in range(d):
+            A[i, :] = np_x[elmt[i+1]] - np_x[elmt[0]]
+            b[i] = A[i, :].dot(A[i, :]) / 2.0
+         center = np.linalg.solve(A, b) + np_x[elmt[0]]
          predictions.append([center, 0.0])
 
          # Loop over all d+1 neighbors of the current element.

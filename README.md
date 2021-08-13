@@ -8,11 +8,11 @@ pre-evaluated cost values.
 To refine the current database toward the true minima, a Delaunay triangulation
 (unstructured mesh) is implemented over the dataset.
 In each iteration:
- - The objective value at the center of each element in the mesh is estimated
-   based on the average linearly extrapolated value predicted by its d+1
-   neighboring cells.
+ - The objective value at the circumcenter of each element in the mesh is
+   estimated based on the average linearly extrapolated value predicted by
+   its d+1 neighboring cells.
  - The candidate cell with the lowest predicted objective value is subdivided
-   by way of a function evaluation at its center.
+   by way of a function evaluation at its circumcenter.
 
 For objective functions with Lipschitz continuous first derivatives, the
 linear fit in each Delaunay cell will converge to the average gradient in that
